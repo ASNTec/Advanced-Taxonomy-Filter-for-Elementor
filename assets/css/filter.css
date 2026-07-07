@@ -1,0 +1,45 @@
+/* EMM Hierarchical Taxonomy Filter - filter.css */
+
+.emm-htf-wrapper {
+    width: 100%;
+}
+
+.emm-htf-parent-row,
+.emm-htf-child-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.emm-htf-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    font-size: inherit;
+    font-family: inherit;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+}
+
+.emm-htf-item:focus {
+    outline: none;
+}
+
+.emm-htf-child-row {
+    display: none;
+}
+
+.emm-htf-description {
+    display: none;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+}
