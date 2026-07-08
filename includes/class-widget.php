@@ -31,6 +31,7 @@ class Widget extends \Elementor\Widget_Base {
 
     protected function register_controls() {
 
+        // ===================== CONTEUDO =====================
         $this->start_controls_section( 'section_filter', [
             'label' => 'Filtro',
             'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
@@ -99,21 +100,64 @@ class Widget extends \Elementor\Widget_Base {
 
         $this->end_controls_section();
 
+        // ===================== ESTILO — CATEGORIAS PAI =====================
         $this->start_controls_section( 'section_style_parent', [
             'label' => 'Estilo — Categorias Pai',
             'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
         ] );
 
-        $this->add_responsive_control( 'parent_justify', [
-            'label'     => 'Alinhamento horizontal',
+        $this->add_responsive_control( 'parent_direction', [
+            'label'          => 'Direcao',
+            'type'           => \Elementor\Controls_Manager::SELECT,
+            'options'        => [
+                'row'    => 'Horizontal',
+                'column' => 'Vertical',
+            ],
+            'default'        => 'row',
+            'tablet_default' => 'row',
+            'mobile_default' => 'row',
+            'selectors'      => [
+                '{{WRAPPER}} .emm-htf-parent-row' => 'flex-direction: {{VALUE}};',
+            ],
+        ] );
+
+        $this->add_responsive_control( 'parent_item_align', [
+            'label'     => 'Alinhamento de Item',
             'type'      => \Elementor\Controls_Manager::CHOOSE,
             'options'   => [
-                'flex-start' => [ 'title' => 'Esquerda',  'icon' => 'eicon-h-align-left' ],
-                'center'     => [ 'title' => 'Centro',    'icon' => 'eicon-h-align-center' ],
-                'flex-end'   => [ 'title' => 'Direita',   'icon' => 'eicon-h-align-right' ],
-                'stretch'    => [ 'title' => 'Expandido', 'icon' => 'eicon-h-align-stretch' ],
+                'flex-start' => [
+                    'title' => 'Inicio',
+                    'icon'  => 'eicon-align-start-h',
+                ],
+                'center'     => [
+                    'title' => 'Centro',
+                    'icon'  => 'eicon-align-center-h',
+                ],
+                'flex-end'   => [
+                    'title' => 'Fim',
+                    'icon'  => 'eicon-align-end-h',
+                ],
+                'stretch'    => [
+                    'title' => 'Expandido',
+                    'icon'  => 'eicon-align-stretch-h',
+                ],
             ],
-            'selectors' => [ '{{WRAPPER}} .emm-htf-parent-row' => 'justify-content: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-parent-row'                => 'justify-content: {{VALUE}};',
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item'  => 'flex: 0 0 auto;',
+            ],
+            'selectors_dictionary' => [
+                'stretch' => 'stretch',
+            ],
+        ] );
+
+        // Override flex para stretch
+        $this->add_control( 'parent_item_align_stretch_note', [
+            'type'            => \Elementor\Controls_Manager::HIDDEN,
+            'default'         => 'stretch',
+            'selectors'       => [
+                '{{WRAPPER}} .emm-htf-parent-row.is-stretch .emm-htf-item' => 'flex: 1 1 0%;',
+            ],
         ] );
 
         $this->add_group_control( \Elementor\Group_Control_Typography::get_type(), [
@@ -122,29 +166,45 @@ class Widget extends \Elementor\Widget_Base {
         ] );
 
         $this->start_controls_tabs( 'parent_tabs' );
+
         $this->start_controls_tab( 'parent_tab_normal', [ 'label' => 'Normal' ] );
+
         $this->add_control( 'parent_color', [
             'label'     => 'Cor do texto',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'color: {{VALUE}};',
+            ],
         ] );
+
         $this->add_control( 'parent_bg', [
             'label'     => 'Cor de fundo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'background-color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'background-color: {{VALUE}};',
+            ],
         ] );
+
         $this->end_controls_tab();
+
         $this->start_controls_tab( 'parent_tab_active', [ 'label' => 'Ativo' ] );
+
         $this->add_control( 'parent_active_color', [
             'label'     => 'Cor do texto ativo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item.emm-htf-active' => 'color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item.emm-htf-active' => 'color: {{VALUE}};',
+            ],
         ] );
+
         $this->add_control( 'parent_active_bg', [
             'label'     => 'Cor de fundo ativo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item.emm-htf-active' => 'background-color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item.emm-htf-active' => 'background-color: {{VALUE}};',
+            ],
         ] );
+
         $this->end_controls_tab();
         $this->end_controls_tabs();
 
@@ -152,7 +212,9 @@ class Widget extends \Elementor\Widget_Base {
             'label'      => 'Padding',
             'type'       => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', 'em', '%' ],
-            'selectors'  => [ '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+            'selectors'  => [
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_group_control( \Elementor\Group_Control_Border::get_type(), [
@@ -164,34 +226,69 @@ class Widget extends \Elementor\Widget_Base {
             'label'      => 'Border Radius',
             'type'       => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', '%' ],
-            'selectors'  => [ '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+            'selectors'  => [
+                '{{WRAPPER}} .emm-htf-parent-row .emm-htf-item' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_responsive_control( 'parent_gap', [
             'label'     => 'Espacamento entre itens',
             'type'      => \Elementor\Controls_Manager::SLIDER,
             'range'     => [ 'px' => [ 'min' => 0, 'max' => 60 ] ],
-            'selectors' => [ '{{WRAPPER}} .emm-htf-parent-row' => 'gap: {{SIZE}}{{UNIT}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-parent-row' => 'gap: {{SIZE}}{{UNIT}};',
+            ],
         ] );
 
         $this->end_controls_section();
 
+        // ===================== ESTILO — CATEGORIAS FILHA =====================
         $this->start_controls_section( 'section_style_child', [
             'label'     => 'Estilo — Categorias Filha',
             'tab'       => \Elementor\Controls_Manager::TAB_STYLE,
             'condition' => [ 'depth' => '2' ],
         ] );
 
-        $this->add_responsive_control( 'child_justify', [
-            'label'     => 'Alinhamento horizontal',
-            'type'      => \Elementor\Controls_Manager::CHOOSE,
-            'options'   => [
-                'flex-start' => [ 'title' => 'Esquerda',  'icon' => 'eicon-h-align-left' ],
-                'center'     => [ 'title' => 'Centro',    'icon' => 'eicon-h-align-center' ],
-                'flex-end'   => [ 'title' => 'Direita',   'icon' => 'eicon-h-align-right' ],
-                'stretch'    => [ 'title' => 'Expandido', 'icon' => 'eicon-h-align-stretch' ],
+        $this->add_responsive_control( 'child_direction', [
+            'label'          => 'Direcao',
+            'type'           => \Elementor\Controls_Manager::SELECT,
+            'options'        => [
+                'row'    => 'Horizontal',
+                'column' => 'Vertical',
             ],
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row' => 'justify-content: {{VALUE}};' ],
+            'default'        => 'row',
+            'tablet_default' => 'row',
+            'mobile_default' => 'row',
+            'selectors'      => [
+                '{{WRAPPER}} .emm-htf-child-row' => 'flex-direction: {{VALUE}};',
+            ],
+        ] );
+
+        $this->add_responsive_control( 'child_item_align', [
+            'label'   => 'Alinhamento de Item',
+            'type'    => \Elementor\Controls_Manager::CHOOSE,
+            'options' => [
+                'flex-start' => [
+                    'title' => 'Inicio',
+                    'icon'  => 'eicon-align-start-h',
+                ],
+                'center'     => [
+                    'title' => 'Centro',
+                    'icon'  => 'eicon-align-center-h',
+                ],
+                'flex-end'   => [
+                    'title' => 'Fim',
+                    'icon'  => 'eicon-align-end-h',
+                ],
+                'stretch'    => [
+                    'title' => 'Expandido',
+                    'icon'  => 'eicon-align-stretch-h',
+                ],
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row'               => 'justify-content: {{VALUE}};',
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'flex: 0 0 auto;',
+            ],
         ] );
 
         $this->add_group_control( \Elementor\Group_Control_Typography::get_type(), [
@@ -200,29 +297,45 @@ class Widget extends \Elementor\Widget_Base {
         ] );
 
         $this->start_controls_tabs( 'child_tabs' );
+
         $this->start_controls_tab( 'child_tab_normal', [ 'label' => 'Normal' ] );
+
         $this->add_control( 'child_color', [
             'label'     => 'Cor do texto',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'color: {{VALUE}};',
+            ],
         ] );
+
         $this->add_control( 'child_bg', [
             'label'     => 'Cor de fundo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'background-color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'background-color: {{VALUE}};',
+            ],
         ] );
+
         $this->end_controls_tab();
+
         $this->start_controls_tab( 'child_tab_active', [ 'label' => 'Ativo' ] );
+
         $this->add_control( 'child_active_color', [
             'label'     => 'Cor do texto ativo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row .emm-htf-item.emm-htf-active' => 'color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item.emm-htf-active' => 'color: {{VALUE}};',
+            ],
         ] );
+
         $this->add_control( 'child_active_bg', [
             'label'     => 'Cor de fundo ativo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row .emm-htf-item.emm-htf-active' => 'background-color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item.emm-htf-active' => 'background-color: {{VALUE}};',
+            ],
         ] );
+
         $this->end_controls_tab();
         $this->end_controls_tabs();
 
@@ -230,7 +343,9 @@ class Widget extends \Elementor\Widget_Base {
             'label'      => 'Padding',
             'type'       => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', 'em', '%' ],
-            'selectors'  => [ '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+            'selectors'  => [
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_group_control( \Elementor\Group_Control_Border::get_type(), [
@@ -242,25 +357,32 @@ class Widget extends \Elementor\Widget_Base {
             'label'      => 'Border Radius',
             'type'       => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', '%' ],
-            'selectors'  => [ '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+            'selectors'  => [
+                '{{WRAPPER}} .emm-htf-child-row .emm-htf-item' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_responsive_control( 'child_gap', [
             'label'     => 'Espacamento entre itens',
             'type'      => \Elementor\Controls_Manager::SLIDER,
             'range'     => [ 'px' => [ 'min' => 0, 'max' => 60 ] ],
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row' => 'gap: {{SIZE}}{{UNIT}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row' => 'gap: {{SIZE}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_responsive_control( 'child_row_margin_top', [
             'label'     => 'Espacamento acima da linha de filhos',
             'type'      => \Elementor\Controls_Manager::SLIDER,
             'range'     => [ 'px' => [ 'min' => 0, 'max' => 80 ] ],
-            'selectors' => [ '{{WRAPPER}} .emm-htf-child-row' => 'margin-top: {{SIZE}}{{UNIT}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-child-row' => 'margin-top: {{SIZE}}{{UNIT}};',
+            ],
         ] );
 
         $this->end_controls_section();
 
+        // ===================== ESTILO — DESCRICAO =====================
         $this->start_controls_section( 'section_style_description', [
             'label'     => 'Estilo — Descricao da Categoria',
             'tab'       => \Elementor\Controls_Manager::TAB_STYLE,
@@ -278,27 +400,35 @@ class Widget extends \Elementor\Widget_Base {
         $this->add_control( 'desc_color', [
             'label'     => 'Cor do texto',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-description' => 'color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-description' => 'color: {{VALUE}};',
+            ],
         ] );
 
         $this->add_control( 'desc_bg', [
             'label'     => 'Cor de fundo',
             'type'      => \Elementor\Controls_Manager::COLOR,
-            'selectors' => [ '{{WRAPPER}} .emm-htf-description' => 'background-color: {{VALUE}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-description' => 'background-color: {{VALUE}};',
+            ],
         ] );
 
         $this->add_responsive_control( 'desc_padding', [
             'label'      => 'Padding',
             'type'       => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', 'em', '%' ],
-            'selectors'  => [ '{{WRAPPER}} .emm-htf-description' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+            'selectors'  => [
+                '{{WRAPPER}} .emm-htf-description' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_responsive_control( 'desc_margin_top', [
             'label'     => 'Espacamento acima da descricao',
             'type'      => \Elementor\Controls_Manager::SLIDER,
             'range'     => [ 'px' => [ 'min' => 0, 'max' => 80 ] ],
-            'selectors' => [ '{{WRAPPER}} .emm-htf-description' => 'margin-top: {{SIZE}}{{UNIT}};' ],
+            'selectors' => [
+                '{{WRAPPER}} .emm-htf-description' => 'margin-top: {{SIZE}}{{UNIT}};',
+            ],
         ] );
 
         $this->add_group_control( \Elementor\Group_Control_Border::get_type(), [
@@ -310,7 +440,9 @@ class Widget extends \Elementor\Widget_Base {
             'label'      => 'Border Radius',
             'type'       => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', '%' ],
-            'selectors'  => [ '{{WRAPPER}} .emm-htf-description' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+            'selectors'  => [
+                '{{WRAPPER}} .emm-htf-description' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
         ] );
 
         $this->end_controls_section();
